@@ -39,17 +39,28 @@ to setup-turtles
   spawn-lower-class-turtles
   spawn-middle-class-turtles
   spawn-upper-class-turtles
+  spawn-police-officers
+  ;spawn in buildings
   go
 end
 
 to go
  move-turtles
+ move-police-officers
  reset-ticks
 end
 
 
 to move-turtles ; move upper class turtles within their territory
   ;ask persons [right random 30  left random 30  forward 0.25]
+  ask persons [
+    ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
+    [lt random-float 180] ;
+  [right random 30  left random 30  forward 0.25]
+  ]
+end
+
+to move-police-officers
   ask persons [
     ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
     [lt random-float 180] ;
@@ -67,21 +78,46 @@ end
 ;-------------Spawning turtles-------------------
 to spawn-lower-class-turtles
   let Q 1
-  ask n-of Q patches with [pcolor = brown - 3] [sprout-persons 10]
+  ask n-of Q patches with [pcolor = brown - 3] [sprout-persons low-class-persons]
+  ask n-of Q patches with [pcolor = brown - 3] [sprout-persons low-class-gangsters]
+  ask persons [set role "gangster"]
   ask persons [set shape "person"]
 end
 
 to spawn-middle-class-turtles
   let Q 1
-  ask n-of Q patches with [pcolor = yellow - 3] [sprout-persons 10]
+  ask n-of Q patches with [pcolor = yellow - 3] [sprout-persons middle-class-persons]
+  ask n-of Q patches with [pcolor = yellow - 3] [sprout-persons middle-class-gangsters]
+  ask persons [set role "gangster"]
   ask persons [set shape "person"]
 end
 
 to spawn-upper-class-turtles
   let Q 1
-  ask n-of Q patches with [pcolor = sky + 1] [sprout-persons 10]
+  ask n-of Q patches with [pcolor = sky + 1] [sprout-persons upper-class-persons]
+  ask n-of Q patches with [pcolor = sky + 1] [sprout-persons upper-class-gangsters]
+  ask persons [set role "gangster"]
   ask persons [set shape "person"]
 end
+
+to spawn-police-officers
+  let Q 1
+  ask n-of Q patches with [pcolor = red - 3] [sprout-persons police]
+  ask persons [set role "police"]
+  ask persons [set shape "person police"]
+end
+;-----------StateMachines----------------------
+
+;(2)state-working: interacting with normal adult who wants to order illegal stuff
+;(2.1)state-working-delivery: Make child deliver illegal stuff to the adult who ordered it
+
+; joina ett annat gäng?
+;(3)state-defend: interact with several other gang-members to create a possy
+;(3.1)state-defend-boss-search:The possy enters a state to search for the rival gangster-boss at different hiding places
+;(3.2)state-defend-boss-kill: the possy now have enough bling to defeat the boss
+
+;(4.1)state-gangster-boss: switch hiding place once a day ish
+;(4.2)state-gangster-boss-find-other-boss: ------
 @#$#@#$#@
 GRAPHICS-WINDOW
 48
@@ -111,10 +147,10 @@ ticks
 30.0
 
 BUTTON
-557
-183
-620
-216
+50
+473
+113
+506
 NIL
 setup
 NIL
@@ -128,10 +164,10 @@ NIL
 1
 
 BUTTON
-563
-279
-626
-312
+116
+473
+179
+506
 NIL
 go
 T
@@ -143,6 +179,111 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+487
+32
+659
+65
+low-class-persons
+low-class-persons
+10
+20
+18.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+661
+32
+833
+65
+low-class-gangsters
+low-class-gangsters
+0
+15
+12.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+488
+71
+660
+104
+middle-class-persons
+middle-class-persons
+10
+20
+16.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+662
+71
+837
+104
+middle-class-gangsters
+middle-class-gangsters
+0
+10
+6.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+488
+109
+660
+142
+upper-class-persons
+upper-class-persons
+10
+15
+13.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+662
+109
+835
+142
+upper-class-gangsters
+upper-class-gangsters
+0
+3
+1.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+488
+147
+660
+180
+police
+police
+4
+10
+10.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -323,6 +464,26 @@ Circle -16777216 true false 113 68 74
 Polygon -10899396 true false 189 233 219 188 249 173 279 188 234 218
 Polygon -10899396 true false 180 255 150 210 105 210 75 240 135 240
 
+home-building
+true
+0
+Rectangle -2674135 true false 60 255 255 165
+Rectangle -6459832 true false 45 165 240 255
+Rectangle -13791810 true false 60 180 75 195
+Rectangle -13791810 true false 90 180 105 195
+Rectangle -13791810 true false 120 180 135 195
+Rectangle -13791810 true false 150 180 165 195
+Rectangle -13791810 true false 180 180 180 195
+Rectangle -13791810 true false 180 180 195 195
+Rectangle -13791810 true false 210 180 225 195
+Rectangle -13791810 true false 60 210 75 225
+Rectangle -13791810 true false 90 210 105 225
+Rectangle -13791810 true false 120 210 135 225
+Rectangle -13791810 true false 150 210 165 225
+Rectangle -13791810 true false 180 210 195 225
+Rectangle -13791810 true false 210 210 225 225
+Rectangle -16777216 true false 135 225 150 255
+
 house
 false
 0
@@ -330,6 +491,42 @@ Rectangle -7500403 true true 45 120 255 285
 Rectangle -16777216 true false 120 210 180 285
 Polygon -7500403 true true 15 120 150 15 285 120
 Line -16777216 false 30 120 270 120
+
+house ranch
+false
+0
+Rectangle -7500403 true true 270 120 285 255
+Rectangle -7500403 true true 15 180 270 255
+Polygon -7500403 true true 0 180 300 180 240 135 60 135 0 180
+Rectangle -16777216 true false 120 195 180 255
+Line -7500403 true 150 195 150 255
+Rectangle -16777216 true false 45 195 105 240
+Rectangle -16777216 true false 195 195 255 240
+Line -7500403 true 75 195 75 240
+Line -7500403 true 225 195 225 240
+Line -16777216 false 270 180 270 255
+Line -16777216 false 0 180 300 180
+
+house two story
+false
+0
+Polygon -7500403 true true 2 180 227 180 152 150 32 150
+Rectangle -7500403 true true 270 75 285 255
+Rectangle -7500403 true true 75 135 270 255
+Rectangle -16777216 true false 124 195 187 256
+Rectangle -16777216 true false 210 195 255 240
+Rectangle -16777216 true false 90 150 135 180
+Rectangle -16777216 true false 210 150 255 180
+Line -16777216 false 270 135 270 255
+Rectangle -7500403 true true 15 180 75 255
+Polygon -7500403 true true 60 135 285 135 240 90 105 90
+Line -16777216 false 75 135 75 180
+Rectangle -16777216 true false 30 195 93 240
+Line -16777216 false 60 135 285 135
+Line -16777216 false 255 105 285 135
+Line -16777216 false 0 180 75 180
+Line -7500403 true 60 195 60 240
+Line -7500403 true 154 195 154 255
 
 leaf
 false
@@ -360,6 +557,44 @@ Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300
 Rectangle -7500403 true true 127 79 172 94
 Polygon -7500403 true true 195 90 240 150 225 180 165 105
 Polygon -7500403 true true 105 90 60 150 75 180 135 105
+
+person police
+false
+0
+Polygon -1 true false 124 91 150 165 178 91
+Polygon -13345367 true false 134 91 149 106 134 181 149 196 164 181 149 106 164 91
+Polygon -13345367 true false 180 195 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285
+Polygon -13345367 true false 120 90 105 90 60 195 90 210 116 158 120 195 180 195 184 158 210 210 240 195 195 90 180 90 165 105 150 165 135 105 120 90
+Rectangle -7500403 true true 123 76 176 92
+Circle -7500403 true true 110 5 80
+Polygon -13345367 true false 150 26 110 41 97 29 137 -1 158 6 185 0 201 6 196 23 204 34 180 33
+Line -13345367 false 121 90 194 90
+Line -16777216 false 148 143 150 196
+Rectangle -16777216 true false 116 186 182 198
+Rectangle -16777216 true false 109 183 124 227
+Rectangle -16777216 true false 176 183 195 205
+Circle -1 true false 152 143 9
+Circle -1 true false 152 166 9
+Polygon -1184463 true false 172 112 191 112 185 133 179 133
+Polygon -1184463 true false 175 6 194 6 189 21 180 21
+Line -1184463 false 149 24 197 24
+Rectangle -16777216 true false 101 177 122 187
+Rectangle -16777216 true false 179 164 183 186
+
+person student
+false
+0
+Polygon -13791810 true false 135 90 150 105 135 165 150 180 165 165 150 105 165 90
+Polygon -7500403 true true 195 90 240 195 210 210 165 105
+Circle -7500403 true true 110 5 80
+Rectangle -7500403 true true 127 79 172 94
+Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285 180 195 195 90
+Polygon -1 true false 100 210 130 225 145 165 85 135 63 189
+Polygon -13791810 true false 90 210 120 225 135 165 67 130 53 189
+Polygon -1 true false 120 224 131 225 124 210
+Line -16777216 false 139 168 126 225
+Line -16777216 false 140 167 76 136
+Polygon -7500403 true true 105 90 60 195 90 210 135 105
 
 plant
 false
