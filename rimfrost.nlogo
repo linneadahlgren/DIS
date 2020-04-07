@@ -1,4 +1,156 @@
+globals [
+  region-boundaries;
+]
 
+breed [persons person]
+
+turtles-own []
+
+persons-own [
+  role
+  age
+  status
+  state
+  hometerritory
+]
+
+patches-own [
+  region;
+]
+
+to setup
+  clear-all
+  setup-territories
+  setup-adult
+  setup-police
+  setup-adultGangster
+  setup-childGangster
+  setup-child
+  reset-ticks
+end
+
+to setup-territories
+  create-patch "lower class" 9 9 6 brown - 3
+  create-patch "middle class" -9 -9 6 yellow - 3
+  create-patch "upper class" -9 9 6 sky + 1
+  create-patch "prison" 9 -9 6 red - 3
+end
+
+to create-patch [name x y radius _color]
+  set name patches with
+  [(pycor >= (y - radius) and pycor <= (y + radius) and (pxcor >= (x - radius) and pxcor <= (x + radius)))]
+  ask name [set pcolor _color]
+end
+
+to setup-adult
+  let Q 1
+  ask n-of Q patches with [pcolor = brown - 3]
+  [sprout-persons number-of-normal-adults [set role "normal" set age 24 set shape "person"]]
+  ask n-of Q patches with [pcolor = yellow - 3]
+  [sprout-persons number-of-normal-adults [set role "normal" set age 35 set shape "person"]]
+  ask n-of Q patches with [pcolor = sky + 1]
+  [sprout-persons number-of-normal-adults [set role "normal" set age 50 set shape "person"]]
+end
+
+to setup-police
+  let Q 1
+  ask n-of Q patches with [pcolor = red - 3]
+  [sprout-persons number-of-police-officers [set role "Law enforcement" set shape "person police"]]
+end
+
+to setup-adultGangster
+  let Q 1
+  ask n-of Q patches with [pcolor = brown - 3]
+  [sprout-persons number-of-adult-gangsters [set role "gangster" set age 28 set shape "gangster"]]
+  ask n-of Q patches with [pcolor = yellow - 3]
+  [sprout-persons number-of-adult-gangsters * 0.8[set role "gangster" set age 35 set shape "gangster"]]
+  ask n-of Q patches with [pcolor = sky + 1]
+  [sprout-persons number-of-adult-gangsters * 0.5 [set role "gangster" set age 58 set shape "gangster"]]
+
+end
+
+to setup-childGangster
+  let Q 1
+  ask n-of Q patches with [pcolor = brown - 3]
+  [sprout-persons number-of-child-gangsters [set role "child-gangster" set age 8 set shape "child-gangster"]]
+  ask n-of Q patches with [pcolor = yellow - 3]
+  [sprout-persons number-of-child-gangsters * 0.8[set role "child-gangster" set age 12 set shape "child-gangster"]]
+  ask n-of Q patches with [pcolor = sky + 1]
+  [sprout-persons number-of-child-gangsters * 0.5 [set role "child-gangster" set age 16 set shape "child-gangster"]]
+end
+
+to setup-child
+  let Q 1
+  ask n-of Q patches with [pcolor = brown - 3]
+   [sprout-persons number-of-normal-children [set role "child" set age 8 set shape "Child"]]
+  ask n-of Q patches with [pcolor = yellow - 3]
+   [sprout-persons number-of-normal-children [set role "child" set age 12 set shape "Child"]]
+  ask n-of Q patches with [pcolor = sky + 1]
+   [sprout-persons number-of-normal-children [set role "child" set age 16 set shape "Child"]]
+end
+
+to go
+  adult-actions
+  police-actions
+  adult-gangsters-action
+  child-gangsters-action
+  child-action
+  tick
+end
+
+to adult-actions
+  ask persons with [role = "normal"] [
+    ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
+    [lt random-float 180] ;
+  [right random 30  left random 30  forward 0.25]
+  ]
+end
+
+to police-actions
+  ask persons with [role = "Law enforcement"] [right random 30  left random 30  forward 0.25]
+end
+
+to adult-gangsters-action
+  ask persons with [role = "gangster"] [
+   ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
+    [lt random-float 180] ;
+    [right random 30  left random 30  forward 0.25]
+  ]
+end
+
+
+
+to child-gangsters-action
+    ask persons with [role = "child-gangster"] [
+   ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
+    [lt random-float 180] ;
+    [right random 30  left random 30  forward 0.25]
+  ]
+end
+
+to child-action
+  ask persons with [role = "child"] [
+    ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
+    [lt random-float 180] ;
+  [right random 30  left random 30  forward 0.25]
+  ]
+end
+
+
+
+
+;-----------StateMachines----------------------
+
+;(2)state-working: interacting with normal adult who wants to order illegal stuff
+;(2.1)state-working-delivery: Make child deliver illegal stuff to the adult who ordered it
+
+; joina ett annat gäng?
+;(3)state-defend: interact with several other gang-members to create a possy
+;(3.1)state-defend-boss-search:The possy enters a state to search for the rival gangster-boss at different hiding places
+;(3.2)state-defend-boss-kill: the possy now have enough bling to defeat the boss
+
+;(4.1)state-gangster-boss: switch hiding place once a day ish
+;(4.2)state-gangster-boss-find-other-boss: ------
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -26,6 +178,115 @@ GRAPHICS-WINDOW
 1
 ticks
 30.0
+
+BUTTON
+286
+659
+349
+692
+setup
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+662
+12
+849
+45
+number-of-normal-adults
+number-of-normal-adults
+10
+20
+20.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+387
+660
+450
+693
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+663
+53
+852
+86
+number-of-police-officers
+number-of-police-officers
+5
+15
+15.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+663
+96
+863
+129
+number-of-adult-gangsters
+number-of-adult-gangsters
+5
+12
+6.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+663
+137
+859
+170
+number-of-child-gangsters
+number-of-child-gangsters
+5
+12
+5.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+664
+179
+860
+212
+number-of-normal-children
+number-of-normal-children
+10
+15
+11.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -120,6 +381,27 @@ Polygon -16777216 true false 162 80 132 78 134 135 209 135 194 105 189 96 180 89
 Circle -7500403 true true 47 195 58
 Circle -7500403 true true 195 195 58
 
+child
+false
+0
+Circle -7500403 true true 120 15 60
+Polygon -7500403 true true 120 75 120 180 105 240 120 255 135 240 150 180 165 240 180 255 195 240 180 180 180 75
+Rectangle -7500403 true true 135 64 165 75
+Polygon -7500403 true true 180 75 210 120 210 150 150 90
+Polygon -7500403 true true 120 75 90 120 90 150 150 90
+
+child-gangster
+false
+0
+Circle -7500403 true true 120 15 60
+Polygon -7500403 true true 120 75 120 180 105 240 120 255 135 240 150 180 165 240 180 255 195 240 180 180 180 75
+Rectangle -7500403 true true 135 64 165 75
+Polygon -7500403 true true 180 75 210 120 210 150 150 90
+Polygon -7500403 true true 120 75 90 120 90 150 150 90
+Circle -16777216 true false 150 45 0
+Polygon -16777216 true false 180 45 180 15 120 15 120 45 90 45 120 30 120 45 180 45 180 45
+Polygon -2674135 true false 120 60 150 75 180 60 120 60
+
 circle
 false
 0
@@ -206,6 +488,18 @@ Circle -16777216 true false 113 68 74
 Polygon -10899396 true false 189 233 219 188 249 173 279 188 234 218
 Polygon -10899396 true false 180 255 150 210 105 210 75 240 135 240
 
+gangster
+false
+14
+Circle -7500403 true false 110 5 80
+Polygon -7500403 true false 105 90 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285 180 195 195 90
+Rectangle -7500403 true false 127 79 172 94
+Polygon -7500403 true false 195 90 240 150 225 180 165 105
+Polygon -7500403 true false 105 90 60 150 75 180 135 105
+Polygon -2674135 true false 105 45 150 90 195 45 105 45 150 75 150 75
+Polygon -16777216 true true 120 30 120 45 135 45 135 30 135 45 150 30 165 45 180 45 180 30 120 30
+Polygon -10899396 true false 75 165 60 165 60 180 75 180 75 165
+
 house
 false
 0
@@ -243,6 +537,29 @@ Polygon -7500403 true true 105 90 120 195 90 285 105 300 135 300 150 225 165 300
 Rectangle -7500403 true true 127 79 172 94
 Polygon -7500403 true true 195 90 240 150 225 180 165 105
 Polygon -7500403 true true 105 90 60 150 75 180 135 105
+
+person police
+false
+0
+Polygon -1 true false 124 91 150 165 178 91
+Polygon -13345367 true false 134 91 149 106 134 181 149 196 164 181 149 106 164 91
+Polygon -13345367 true false 180 195 120 195 90 285 105 300 135 300 150 225 165 300 195 300 210 285
+Polygon -13345367 true false 120 90 105 90 60 195 90 210 116 158 120 195 180 195 184 158 210 210 240 195 195 90 180 90 165 105 150 165 135 105 120 90
+Rectangle -7500403 true true 123 76 176 92
+Circle -7500403 true true 110 5 80
+Polygon -13345367 true false 150 26 110 41 97 29 137 -1 158 6 185 0 201 6 196 23 204 34 180 33
+Line -13345367 false 121 90 194 90
+Line -16777216 false 148 143 150 196
+Rectangle -16777216 true false 116 186 182 198
+Rectangle -16777216 true false 109 183 124 227
+Rectangle -16777216 true false 176 183 195 205
+Circle -1 true false 152 143 9
+Circle -1 true false 152 166 9
+Polygon -1184463 true false 172 112 191 112 185 133 179 133
+Polygon -1184463 true false 175 6 194 6 189 21 180 21
+Line -1184463 false 149 24 197 24
+Rectangle -16777216 true false 101 177 122 187
+Rectangle -16777216 true false 179 164 183 186
 
 plant
 false
