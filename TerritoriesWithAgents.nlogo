@@ -43,32 +43,12 @@ to setup-turtles
 end
 
 to go
- move-lower-class-turtles
- move-middle-class-turtles
- move-upper-class-turtles
+ move-turtles
  reset-ticks
 end
 
 
-to move-lower-class-turtles ; move upper class turtles within their territory
-  ;ask persons [right random 30  left random 30  forward 0.25]
-  ask persons [
-    ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
-    [lt random-float 180] ;
-  [right random 30  left random 30  forward 0.25]
-  ]
-end
-
-to move-middle-class-turtles ; move upper class turtles within their territory
-  ;ask persons [right random 30  left random 30  forward 0.25]
-  ask persons [
-    ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
-    [lt random-float 180] ;
-  [right random 30  left random 30  forward 0.25]
-  ]
-end
-
-to move-upper-class-turtles ; move upper class turtles within their territory
+to move-turtles ; move upper class turtles within their territory
   ;ask persons [right random 30  left random 30  forward 0.25]
   ask persons [
     ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
