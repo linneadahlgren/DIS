@@ -28,10 +28,10 @@ end
 
 
 to setup-regions
-  create-patch-lower-class "lower class" 9 9 6 brown - 3
-  create-patch-middle-class "middle class" -9 -9 6 yellow - 3
-  create-patch-upper-class "upper class" -9 9 6 sky + 1
-  create-patch-prison "prison" 9 -9 6 red - 3
+  create-patch "lower class" 9 9 6 brown - 3
+  create-patch "middle class" -9 -9 6 yellow - 3
+  create-patch "upper class" -9 9 6 sky + 1
+  create-patch "prison" 9 -9 6 red - 3
 end
 
 
@@ -79,19 +79,7 @@ end
 
 ;--------------Creating patches----------------
 
-to create-patch-lower-class[name x y radius _color]
-  set name patches with [(pycor >= (y - radius) and pycor <= (y + radius) and (pxcor >= (x - radius) and pxcor <= (x + radius)))]
-  ask name [set pcolor _color]
-end
-to create-patch-middle-class[name x y radius _color]
-  set name patches with [(pycor >= (y - radius) and pycor <= (y + radius) and (pxcor >= (x - radius) and pxcor <= (x + radius)))]
-  ask name [set pcolor _color]
-end
-to create-patch-upper-class[name x y radius _color]
-  set name patches with [(pycor >= (y - radius) and pycor <= (y + radius) and (pxcor >= (x - radius) and pxcor <= (x + radius)))]
-  ask name [set pcolor _color]
-end
-to create-patch-prison[name x y radius _color]
+to create-patch [name x y radius _color]
   set name patches with [(pycor >= (y - radius) and pycor <= (y + radius) and (pxcor >= (x - radius) and pxcor <= (x + radius)))]
   ask name [set pcolor _color]
 end
