@@ -1,5 +1,7 @@
 globals [
   region-boundaries;
+  day;
+  night;
 ]
 
 breed [persons person]
@@ -12,6 +14,8 @@ persons-own [
   status
   state
   hometerritory
+  next-task
+  stopped
 ]
 
 patches-own [
@@ -92,7 +96,7 @@ end
 to go
   adult-actions
   police-actions
-  adult-gangsters-action
+  adult-gangsters-idle
   child-gangsters-action
   child-action
   tick
@@ -107,19 +111,50 @@ to adult-actions
 end
 
 to police-actions
+  ask persons with [role = "Law enforcement"] [
+  ask  other persons with [role = "gangster"] in-radius 10 [set stopped "false"] ; true, false, in-sigh
+  ask  other persons with [role = "gangster"] in-radius 3 [set stopped "true"]
+  ]
   ask persons with [role = "Law enforcement"] [right random 30  left random 30  forward 0.25]
 end
 
-to adult-gangsters-action
-  ask persons with [role = "gangster"] [
-   ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
-    [lt random-float 180] ;
+to adult-gangsters-idle
+   ; ask persons with [role = "gangster"]
+   ; [ask persons with [role = "Law enforcment"] in-cone 10 90
+   ; [if any? persons with [role = "Law enforcement"] [set next-task [ -> adult-gangster-hide]]]]
+
+    ask persons with [role = "gangster"] [
+    ifelse stopped = "true" [set next-task  [ -> adult-gangster-stand]]
     [right random 30  left random 30  forward 0.25]
   ]
 end
 
 
 
+
+;states for adult-gangster--------------------
+to adult-gangster-stand
+  ask persons with [role = "gangsters"]
+  [repeat 1 [ fd 0 wait 0.5 ]]
+  ; HÄR SKA POLISEN UTGÖRA SINA ACTIONS
+end
+
+to adult-gangster-hide ; hiding-places måste implementeras
+  ;ask persons with [role = "gangster" ][lt 180]
+  ;ask persons with [role = "gangster" ][set color red]
+end
+
+
+
+
+
+
+
+
+
+
+
+;states end for adult-gangster----------------
 to child-gangsters-action
     ask persons with [role = "child-gangster"] [
    ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
@@ -180,10 +215,10 @@ ticks
 30.0
 
 BUTTON
-286
-659
-349
-692
+669
+287
+732
+320
 setup
 setup
 NIL
@@ -205,17 +240,17 @@ number-of-normal-adults
 number-of-normal-adults
 10
 20
-20.0
+10.0
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-387
-660
-450
-693
+770
+288
+833
+321
 NIL
 go
 T
@@ -252,7 +287,7 @@ number-of-adult-gangsters
 number-of-adult-gangsters
 5
 12
-6.0
+12.0
 1
 1
 NIL
@@ -282,7 +317,7 @@ number-of-normal-children
 number-of-normal-children
 10
 15
-11.0
+10.0
 1
 1
 NIL
@@ -507,6 +542,83 @@ Rectangle -7500403 true true 45 120 255 285
 Rectangle -16777216 true false 120 210 180 285
 Polygon -7500403 true true 15 120 150 15 285 120
 Line -16777216 false 30 120 270 120
+
+house bungalow
+false
+0
+Rectangle -7500403 true true 210 75 225 255
+Rectangle -7500403 true true 90 135 210 255
+Rectangle -16777216 true false 165 195 195 255
+Line -16777216 false 210 135 210 255
+Rectangle -16777216 true false 105 202 135 240
+Polygon -7500403 true true 225 150 75 150 150 75
+Line -16777216 false 75 150 225 150
+Line -16777216 false 195 120 225 150
+Polygon -16777216 false false 165 195 150 195 180 165 210 195
+Rectangle -16777216 true false 135 105 165 135
+
+house colonial
+false
+0
+Rectangle -7500403 true true 270 75 285 255
+Rectangle -7500403 true true 45 135 270 255
+Rectangle -16777216 true false 124 195 187 256
+Rectangle -16777216 true false 60 195 105 240
+Rectangle -16777216 true false 60 150 105 180
+Rectangle -16777216 true false 210 150 255 180
+Line -16777216 false 270 135 270 255
+Polygon -7500403 true true 30 135 285 135 240 90 75 90
+Line -16777216 false 30 135 285 135
+Line -16777216 false 255 105 285 135
+Line -7500403 true 154 195 154 255
+Rectangle -16777216 true false 210 195 255 240
+Rectangle -16777216 true false 135 150 180 180
+
+house efficiency
+false
+0
+Rectangle -7500403 true true 180 90 195 195
+Rectangle -7500403 true true 90 165 210 255
+Rectangle -16777216 true false 165 195 195 255
+Rectangle -16777216 true false 105 202 135 240
+Polygon -7500403 true true 225 165 75 165 150 90
+Line -16777216 false 75 165 225 165
+
+house ranch
+false
+0
+Rectangle -7500403 true true 270 120 285 255
+Rectangle -7500403 true true 15 180 270 255
+Polygon -7500403 true true 0 180 300 180 240 135 60 135 0 180
+Rectangle -16777216 true false 120 195 180 255
+Line -7500403 true 150 195 150 255
+Rectangle -16777216 true false 45 195 105 240
+Rectangle -16777216 true false 195 195 255 240
+Line -7500403 true 75 195 75 240
+Line -7500403 true 225 195 225 240
+Line -16777216 false 270 180 270 255
+Line -16777216 false 0 180 300 180
+
+house two story
+false
+0
+Polygon -7500403 true true 2 180 227 180 152 150 32 150
+Rectangle -7500403 true true 270 75 285 255
+Rectangle -7500403 true true 75 135 270 255
+Rectangle -16777216 true false 124 195 187 256
+Rectangle -16777216 true false 210 195 255 240
+Rectangle -16777216 true false 90 150 135 180
+Rectangle -16777216 true false 210 150 255 180
+Line -16777216 false 270 135 270 255
+Rectangle -7500403 true true 15 180 75 255
+Polygon -7500403 true true 60 135 285 135 240 90 105 90
+Line -16777216 false 75 135 75 180
+Rectangle -16777216 true false 30 195 93 240
+Line -16777216 false 60 135 285 135
+Line -16777216 false 255 105 285 135
+Line -16777216 false 0 180 75 180
+Line -7500403 true 60 195 60 240
+Line -7500403 true 154 195 154 255
 
 leaf
 false
