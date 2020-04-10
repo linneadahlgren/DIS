@@ -41,7 +41,15 @@ to go
 end
 
 
-
+to handle-time
+  let counter ticks mod 500 ; 500 är antalet ticks vi har per dygn
+  if( counter < floor(( 500 / 2)))[
+    set astronomical-day-state "day"
+  ]
+  if( counter > floor(( 500 / 2)) + 1 )[
+    set astronomical-day-state "night"
+  ]
+end
 
 to adult-actions
   ask persons with [role = "normal"] [
