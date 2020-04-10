@@ -1,7 +1,8 @@
+__includes [ "setupAll.nls" ]
+
 globals [
   region-boundaries;
-  day;
-  night;
+  astronomical-day-state; antingen day eller night
 ]
 
 breed [persons person]
@@ -24,74 +25,10 @@ patches-own [
 
 to setup
   clear-all
-  setup-territories
-  setup-adult
-  setup-police
-  setup-adultGangster
-  setup-childGangster
-  setup-child
+  setup-All
   reset-ticks
 end
 
-to setup-territories
-  create-patch "lower class" 9 9 6 brown - 3
-  create-patch "middle class" -9 -9 6 yellow - 3
-  create-patch "upper class" -9 9 6 sky + 1
-  create-patch "prison" 9 -9 6 red - 3
-end
-
-to create-patch [name x y radius _color]
-  set name patches with
-  [(pycor >= (y - radius) and pycor <= (y + radius) and (pxcor >= (x - radius) and pxcor <= (x + radius)))]
-  ask name [set pcolor _color]
-end
-
-to setup-adult
-  let Q 1
-  ask n-of Q patches with [pcolor = brown - 3]
-  [sprout-persons number-of-normal-adults [set role "normal" set age 24 set shape "person"]]
-  ask n-of Q patches with [pcolor = yellow - 3]
-  [sprout-persons number-of-normal-adults [set role "normal" set age 35 set shape "person"]]
-  ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-persons number-of-normal-adults [set role "normal" set age 50 set shape "person"]]
-end
-
-to setup-police
-  let Q 1
-  ask n-of Q patches with [pcolor = red - 3]
-  [sprout-persons number-of-police-officers [set role "Law enforcement" set shape "person police"]]
-end
-
-to setup-adultGangster
-  let Q 1
-  ask n-of Q patches with [pcolor = brown - 3]
-  [sprout-persons number-of-adult-gangsters [set role "gangster" set age 28 set shape "gangster"]]
-  ask n-of Q patches with [pcolor = yellow - 3]
-  [sprout-persons number-of-adult-gangsters * 0.8[set role "gangster" set age 35 set shape "gangster"]]
-  ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-persons number-of-adult-gangsters * 0.5 [set role "gangster" set age 58 set shape "gangster"]]
-
-end
-
-to setup-childGangster
-  let Q 1
-  ask n-of Q patches with [pcolor = brown - 3]
-  [sprout-persons number-of-child-gangsters [set role "child-gangster" set age 8 set shape "child-gangster"]]
-  ask n-of Q patches with [pcolor = yellow - 3]
-  [sprout-persons number-of-child-gangsters * 0.8[set role "child-gangster" set age 12 set shape "child-gangster"]]
-  ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-persons number-of-child-gangsters * 0.5 [set role "child-gangster" set age 16 set shape "child-gangster"]]
-end
-
-to setup-child
-  let Q 1
-  ask n-of Q patches with [pcolor = brown - 3]
-   [sprout-persons number-of-normal-children [set role "child" set age 8 set shape "Child"]]
-  ask n-of Q patches with [pcolor = yellow - 3]
-   [sprout-persons number-of-normal-children [set role "child" set age 12 set shape "Child"]]
-  ask n-of Q patches with [pcolor = sky + 1]
-   [sprout-persons number-of-normal-children [set role "child" set age 16 set shape "Child"]]
-end
 
 to go
   adult-actions
@@ -99,8 +36,12 @@ to go
   adult-gangsters-idle
   child-gangsters-action
   child-action
+  handle-time
   tick
 end
+
+
+
 
 to adult-actions
   ask persons with [role = "normal"] [
@@ -112,7 +53,7 @@ end
 
 to police-actions
   ask persons with [role = "Law enforcement"] [
-  ask  other persons with [role = "gangster"] in-radius 10 [set stopped "false"] ; true, false, in-sigh
+ ; ask  other persons with [role = "gangster"] in-radius 10 [set stopped "false"] ; true, false, in-sigh
   ask  other persons with [role = "gangster"] in-radius 3 [set stopped "true"]
   ]
   ask persons with [role = "Law enforcement"] [right random 30  left random 30  forward 0.25]
@@ -272,7 +213,7 @@ number-of-police-officers
 number-of-police-officers
 5
 15
-15.0
+8.0
 1
 1
 NIL
@@ -287,7 +228,7 @@ number-of-adult-gangsters
 number-of-adult-gangsters
 5
 12
-12.0
+7.0
 1
 1
 NIL
