@@ -61,10 +61,12 @@ end
 to police-actions
   ask persons with [role = "Law enforcement"] [
 
-    if any? persons with [role = "gangster"] in-radius 10 [
-      ifelse any? persons with [role = "ganster"] in-radius 3 [ set stopped "true" ]
-      [set stopped "false"] ; true, false, in-sigh
-     ]
+    ask persons with [ role = "ganster"] in-radius 10[
+      let gansterToStop persons with [role = "gangster"] in-radius 3
+      ifelse any? gansterToStop [set stopped "true"]
+      [set stopped false]
+
+    ]
    ; ask  other persons with [role = "gangster"] in-radius 3 [set stopped "true"] ; tell the gangsters within radius of 3 to standstill
 
   ]
@@ -79,12 +81,12 @@ to adult-gangsters-idle
     ifelse stopped = "true" [set next-task  [ -> adult-gangster-stand]][        ; first check if it should stand still
       let policeClose persons with [role = "Law enforcement" ] in-cone 10 50    ; see if there is police close
 
-      ifelse any? policeClose [set next-task [ -> adult-gangster-hide]]         ; hide if there is
+      ifelse any? policeClose [set next-task [ -> adult-gangster-hide]]   [      ; hide if there is
         ifelse astronomical-day-state = "day" [set next-task [-> adult-gangster-work]][ ; if not, countinue business as usual
           set next-task[ -> go-home ]; else its is night go home?
         ]
+      ]
 
-    ]
   ]
 end
 
@@ -109,8 +111,8 @@ to adult-gangster-hide ; hiding-places måste implementeras
   ]
 end
 
-to adult-ganster-work
-  [right random 30  left random 30  forward 0.25]
+to adult-gangster-work
+  ask persons with [role = "gangster"][right random 30  left random 30  forward 0.25]
 end
 
 
