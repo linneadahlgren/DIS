@@ -31,11 +31,8 @@ end
 
 
 to go
-  adult-actions
-  police-actions
-  adult-gangsters-idle
-  child-gangsters-action
-  child-action
+  ask persons [run next-task]
+  
   handle-time
   tick
 end
@@ -59,20 +56,8 @@ to adult-actions
 end
 
 to police-actions
-  ask persons with [role = "Law enforcement"] [
-
-    ask persons with [ role = "ganster"] in-radius 10[
-      let gansterToStop persons with [role = "gangster"] in-radius 3
-      ifelse any? gansterToStop [set stopped "true"]
-      [set stopped false]
-
-    ]
-   ; ask  other persons with [role = "gangster"] in-radius 3 [set stopped "true"] ; tell the gangsters within radius of 3 to standstill
-
-  ]
-  ; add procedure to inspect the stopped person here.
-
-  ask persons with [role = "Law enforcement"]  [right random 30  left random 30  forward 0.25] ; then move
+    ask persons with [ role = "gangster"] in-radius 2 [set stopped "true"]
+  right random 30  left random 30  forward 0.25 ; then move
 end
 
 to adult-gangsters-idle
@@ -88,6 +73,14 @@ to adult-gangsters-idle
       ]
 
   ]
+
+end
+
+to adult-gangster-idle
+    ifelse stopped = "true" [set next-task [ -> adult-gangster-stand]]
+    [right random 30  left random 30  forward 0.25]
+
+  ;]
 end
 
 
@@ -97,8 +90,9 @@ end
 
 ;states for adult-gangster--------------------
 to adult-gangster-stand
-  ask persons with [role = "gangster"]
-  [repeat 1 [ fd 0 wait 0.5 ]]
+    set stopped "false"
+    set next-task [-> adult-gangster-idle]
+
   ; HÄR SKA POLISEN UTGÖRA SINA ACTIONS
 end
 
