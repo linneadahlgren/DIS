@@ -80,11 +80,18 @@ to adult-gangsters-idle
       let policeClose persons with [role = "Law enforcement" ] in-cone 10 50    ; see if there is police close
 
       ifelse any? policeClose [set next-task [ -> adult-gangster-hide]]         ; hide if there is
-        [right random 30  left random 30  forward 0.25]                         ; if not, countinue business as usual
+        ifelse astronomical-day-state = "day" [set next-task [-> adult-gangster-work]][ ; if not, countinue business as usual
+          set next-task[ -> go-home ]; else its is night go home?
+        ]
+
     ]
   ]
 end
 
+
+to go-home
+  ; idk how to go home?
+end
 
 ;states for adult-gangster--------------------
 to adult-gangster-stand
@@ -100,6 +107,10 @@ to adult-gangster-hide ; hiding-places måste implementeras
      set stopped "hide"
     set hidden? not hidden?
   ]
+end
+
+to adult-ganster-work
+  [right random 30  left random 30  forward 0.25]
 end
 
 
