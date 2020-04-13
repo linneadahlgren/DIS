@@ -31,9 +31,8 @@ end
 
 
 to go
-  ask persons [run next-task]
-
   handle-time
+  ask persons [run next-task]
   tick
 end
 
@@ -60,37 +59,30 @@ to police-actions
   right random 30  left random 30  forward 0.25 ; then move
 end
 
-to adult-gangsters-idle
-
-
+to adult-gangster-idle
     ifelse stopped = "true" [set next-task  [ -> adult-gangster-stand]][        ; first check if it should stand still
-      let policeClose persons with [role = "Law enforcement" ] in-cone 10 50    ; see if there is police close
 
-      ifelse any? policeClose [set next-task [ -> adult-gangster-hide]]   [      ; hide if there is
+     let policeClose persons with [role = "Law enforcement" ] in-cone 4 35    ; see if there is police close
+     ifelse any? policeClose [set next-task [ -> adult-gangster-hide]]   [      ; hide if there is
+
         ifelse astronomical-day-state = "day" [set next-task [-> adult-gangster-work]][ ; if not, countinue business as usual
           set next-task[ -> go-home ]; else its is night go home?
         ]
       ]
   ]
 
-
-
-end
-
-to adult-gangster-idle
-    ifelse stopped = "true" [set next-task [ -> adult-gangster-stand]]
-    [right random 30  left random 30  forward 0.25]
-
-  ;]
 end
 
 
 to go-home
   ; idk how to go home?
+  set next-task [ -> adult-gangster-idle]
+
 end
 
 ;states for adult-gangster--------------------
 to adult-gangster-stand
+  set hidden? true ; for demo purpose
     set stopped "false"
     set next-task [-> adult-gangster-idle]
 
@@ -98,16 +90,19 @@ to adult-gangster-stand
 end
 
 to adult-gangster-hide ; hiding-places måste implementeras
-  ;ask persons with [role = "gangster" ][lt 180]
+ lt 180
 
 
-     set status "hide"
-    set hidden? true
-
+     set status "hide" ; Här skall gangsters gå till hideout
+  ;set hidden? true
+  set next-task [ -> adult-gangster-idle]
 end
 
 to adult-gangster-work
-  ask persons with [role = "gangster"][right random 30  left random 30  forward 0.25]
+  ifelse [pcolor] of patch-ahead 0.25 = red - 3
+  [lt random-float 180]
+  [right random 30  left random 30  forward 0.25]
+  set next-task [ -> adult-gangster-idle]
 end
 
 
@@ -253,7 +248,7 @@ number-of-adult-gangsters
 number-of-adult-gangsters
 5
 12
-8.0
+12.0
 1
 1
 NIL
