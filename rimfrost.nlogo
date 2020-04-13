@@ -1,7 +1,8 @@
+__includes [ "setupAll.nls" ]
+
 globals [
   region-boundaries;
-  day;
-  night;
+  astronomical-day-state                  ; antingen day eller night
 ]
 
 breed [persons person]
@@ -24,105 +25,64 @@ patches-own [
 
 to setup
   clear-all
-  setup-territories
-;  setup-adult
-  setup-police
-  setup-adultGangster
-;  setup-childGangster
-;  setup-child
+  setup-All
   reset-ticks
 end
 
-to setup-territories
-  create-patch "lower class" 9 9 6 brown - 3
-  create-patch "middle class" -9 -9 6 yellow - 3
-  create-patch "upper class" -9 9 6 sky + 1
-  create-patch "prison" 9 -9 6 red - 3
-end
-
-to create-patch [name x y radius _color]
-  set name patches with
-  [(pycor >= (y - radius) and pycor <= (y + radius) and (pxcor >= (x - radius) and pxcor <= (x + radius)))]
-  ask name [set pcolor _color]
-end
-
-to setup-adult
-  let Q 1
-  ask n-of Q patches with [pcolor = brown - 3]
-  [sprout-persons number-of-normal-adults [set role "normal" set age 24 set shape "person"]]
-  ask n-of Q patches with [pcolor = yellow - 3]
-  [sprout-persons number-of-normal-adults [set role "normal" set age 35 set shape "person"]]
-  ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-persons number-of-normal-adults [set role "normal" set age 50 set shape "person"]]
-end
-
-to setup-police
-  let Q 1
-  ask n-of Q patches with [pcolor = red - 3]
-  [sprout-persons number-of-police-officers [set role "Law enforcement" set shape "person police" set next-task [-> police-actions]]]
-end
-
-to setup-adultGangster
-  let Q 1
-  ask n-of Q patches with [pcolor = brown - 3]
-  [sprout-persons number-of-adult-gangsters [set role "gangster" set age 28 set shape "gangster" set next-task [ -> adult-gangster-idle]]]
-  ask n-of Q patches with [pcolor = yellow - 3]
-  [sprout-persons number-of-adult-gangsters * 0.8[set role "gangster" set age 35 set shape "gangster" set next-task [ -> adult-gangster-idle]]]
-  ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-persons number-of-adult-gangsters * 0.5 [set role "gangster" set age 58 set shape "gangster" set next-task [ -> adult-gangster-idle]]]
-
-end
-
-to setup-childGangster
-  let Q 1
-  ask n-of Q patches with [pcolor = brown - 3]
-  [sprout-persons number-of-child-gangsters [set role "child-gangster" set age 8 set shape "child-gangster"]]
-  ask n-of Q patches with [pcolor = yellow - 3]
-  [sprout-persons number-of-child-gangsters * 0.8[set role "child-gangster" set age 12 set shape "child-gangster"]]
-  ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-persons number-of-child-gangsters * 0.5 [set role "child-gangster" set age 16 set shape "child-gangster"]]
-end
-
-to setup-child
-  let Q 1
-  ask n-of Q patches with [pcolor = brown - 3]
-   [sprout-persons number-of-normal-children [set role "child" set age 8 set shape "Child"]]
-  ask n-of Q patches with [pcolor = yellow - 3]
-   [sprout-persons number-of-normal-children [set role "child" set age 12 set shape "Child"]]
-  ask n-of Q patches with [pcolor = sky + 1]
-   [sprout-persons number-of-normal-children [set role "child" set age 16 set shape "Child"]]
-end
 
 to go
-  ask persons [run next-task ]
+  handle-time
+  ask persons [run next-task]
   tick
+end
+
+to handle-time
+  let counter ticks mod 500                       ; 500 är antalet ticks vi har per dygn
+  if( counter < floor(( 500 / 2)))[
+    set astronomical-day-state "day"
+  ]
+  if( counter > floor(( 500 / 2)) + 1 )[
+    set astronomical-day-state "night"
+  ]
 end
 
 to adult-actions
   ask persons with [role = "normal"] [
-    ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
+    ifelse [pcolor] of patch-ahead 0.25 = black     ;if road ahead
     [lt random-float 180] ;
   [right random 30  left random 30  forward 0.25]
   ]
 end
 
 to police-actions
-  ask persons with [ role = "gangster"] in-radius 2 [set stopped "true"]
+    ask persons with [ role = "gangster"] in-radius 2 [set stopped "true"]
   right random 30  left random 30  forward 0.25 ; then move
 end
 
 to adult-gangster-idle
-    ifelse stopped = "true" [set next-task [ -> adult-gangster-stand]]
-    [right random 30  left random 30  forward 0.25]
+    ifelse stopped = "true" [set next-task  [ -> adult-gangster-stand]][        ; first check if it should stand still
 
-  ;]
+     let policeClose persons with [role = "Law enforcement" ] in-cone 4 35    ; see if there is police close
+     ifelse any? policeClose [set next-task [ -> adult-gangster-hide]]   [      ; hide if there is
+
+        ifelse astronomical-day-state = "day" [set next-task [-> adult-gangster-work]][ ; if not, countinue business as usual
+          set next-task[ -> go-home ]; else its is night go home?
+        ]
+      ]
+  ]
+
 end
 
 
+to go-home
+  ; idk how to go home?
+  set next-task [ -> adult-gangster-idle]
 
+end
 
 ;states for adult-gangster--------------------
 to adult-gangster-stand
+  set hidden? true ; for demo purpose
     set stopped "false"
     set next-task [-> adult-gangster-idle]
 
@@ -130,7 +90,19 @@ to adult-gangster-stand
 end
 
 to adult-gangster-hide ; hiding-places måste implementeras
+ lt 180
 
+
+     set status "hide" ; Här skall gangsters gå till hideout
+  ;set hidden? true
+  set next-task [ -> adult-gangster-idle]
+end
+
+to adult-gangster-work
+  ifelse [pcolor] of patch-ahead 0.25 = red - 3
+  [lt random-float 180]
+  [right random 30  left random 30  forward 0.25]
+  set next-task [ -> adult-gangster-idle]
 end
 
 
@@ -261,7 +233,7 @@ number-of-police-officers
 number-of-police-officers
 5
 15
-15.0
+5.0
 1
 1
 NIL
