@@ -2,7 +2,7 @@ __includes [ "setupAll.nls" ]
 
 globals [
   region-boundaries;
-  astronomical-day-state; antingen day eller night
+  astronomical-day-state                  ; antingen day eller night
 ]
 
 breed [persons person]
@@ -40,9 +40,8 @@ to go
   tick
 end
 
-
 to handle-time
-  let counter ticks mod 500 ; 500 är antalet ticks vi har per dygn
+  let counter ticks mod 500                       ; 500 är antalet ticks vi har per dygn
   if( counter < floor(( 500 / 2)))[
     set astronomical-day-state "day"
   ]
@@ -53,7 +52,7 @@ end
 
 to adult-actions
   ask persons with [role = "normal"] [
-    ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
+    ifelse [pcolor] of patch-ahead 0.25 = black     ;if road ahead
     [lt random-float 180] ;
   [right random 30  left random 30  forward 0.25]
   ]
@@ -61,36 +60,46 @@ end
 
 to police-actions
   ask persons with [role = "Law enforcement"] [
- ; ask  other persons with [role = "gangster"] in-radius 10 [set stopped "false"] ; true, false, in-sigh
-  ask  other persons with [role = "gangster"] in-radius 3 [set stopped "true"]
+
+    if any? persons with [role = "gangster"] in-radius 10 [
+      ifelse any? persons with [role = "ganster"] in-radius 3 [ set stopped "true" ]
+      [set stopped "false"] ; true, false, in-sigh
+     ]
+   ; ask  other persons with [role = "gangster"] in-radius 3 [set stopped "true"] ; tell the gangsters within radius of 3 to standstill
+
   ]
-  ask persons with [role = "Law enforcement"] [right random 30  left random 30  forward 0.25]
+  ; add procedure to inspect the stopped person here.
+
+  ask persons with [role = "Law enforcement"]  [right random 30  left random 30  forward 0.25] ; then move
 end
 
 to adult-gangsters-idle
-   ; ask persons with [role = "gangster"]
-   ; [ask persons with [role = "Law enforcment"] in-cone 10 90
-   ; [if any? persons with [role = "Law enforcement"] [set next-task [ -> adult-gangster-hide]]]]
 
     ask persons with [role = "gangster"] [
-    ifelse stopped = "true" [set next-task  [ -> adult-gangster-stand]]
-    [right random 30  left random 30  forward 0.25]
+    ifelse stopped = "true" [set next-task  [ -> adult-gangster-stand]][        ; first check if it should stand still
+      let policeClose persons with [role = "Law enforcement" ] in-cone 10 50    ; see if there is police close
+
+      ifelse any? policeClose [set next-task [ -> adult-gangster-hide]]         ; hide if there is
+        [right random 30  left random 30  forward 0.25]                         ; if not, countinue business as usual
+    ]
   ]
 end
-
-
 
 
 ;states for adult-gangster--------------------
 to adult-gangster-stand
-  ask persons with [role = "gangsters"]
+  ask persons with [role = "gangster"]
   [repeat 1 [ fd 0 wait 0.5 ]]
   ; HÄR SKA POLISEN UTGÖRA SINA ACTIONS
 end
 
 to adult-gangster-hide ; hiding-places måste implementeras
   ;ask persons with [role = "gangster" ][lt 180]
-  ;ask persons with [role = "gangster" ][set color red]
+
+  ask persons with [role = "gangster" ][
+     set stopped "hide"
+    set hidden? not hidden?
+  ]
 end
 
 
@@ -221,7 +230,7 @@ number-of-police-officers
 number-of-police-officers
 5
 15
-8.0
+5.0
 1
 1
 NIL
@@ -236,7 +245,7 @@ number-of-adult-gangsters
 number-of-adult-gangsters
 5
 12
-7.0
+8.0
 1
 1
 NIL
