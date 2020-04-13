@@ -32,7 +32,7 @@ end
 
 to go
   ask persons [run next-task]
-  
+
   handle-time
   tick
 end
@@ -62,7 +62,7 @@ end
 
 to adult-gangsters-idle
 
-    ask persons with [role = "gangster"] [
+
     ifelse stopped = "true" [set next-task  [ -> adult-gangster-stand]][        ; first check if it should stand still
       let policeClose persons with [role = "Law enforcement" ] in-cone 10 50    ; see if there is police close
 
@@ -71,8 +71,9 @@ to adult-gangsters-idle
           set next-task[ -> go-home ]; else its is night go home?
         ]
       ]
-
   ]
+
+
 
 end
 
@@ -99,10 +100,10 @@ end
 to adult-gangster-hide ; hiding-places måste implementeras
   ;ask persons with [role = "gangster" ][lt 180]
 
-  ask persons with [role = "gangster" ][
-     set stopped "hide"
-    set hidden? not hidden?
-  ]
+
+     set status "hide"
+    set hidden? true
+
 end
 
 to adult-gangster-work

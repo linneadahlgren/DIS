@@ -34,17 +34,17 @@ end
 to setup-police
   let Q 1
   ask n-of Q patches with [pcolor = red - 3]
-  [sprout-persons number-of-police-officers [set role "Law enforcement" set shape "person police"]]
+  [sprout-persons number-of-police-officers [set role "Law enforcement" set shape "person police" set next-task [-> police-actions]]]
 end
 
 to setup-adultGangster
   let Q 1
   ask n-of Q patches with [pcolor = brown - 3]
-  [sprout-persons number-of-adult-gangsters [set role "gangster" set age 28 set shape "gangster"]]
+  [sprout-persons number-of-adult-gangsters [set role "gangster" set age 28 set shape "gangster" set next-task [ -> adult-gangster-idle]]]
   ask n-of Q patches with [pcolor = yellow - 3]
-  [sprout-persons number-of-adult-gangsters * 0.8[set role "gangster" set age 35 set shape "gangster"]]
+  [sprout-persons number-of-adult-gangsters * 0.8[set role "gangster" set age 35 set shape "gangster" set next-task [ -> adult-gangster-idle]]]
   ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-persons number-of-adult-gangsters * 0.5 [set role "gangster" set age 58 set shape "gangster"]]
+  [sprout-persons number-of-adult-gangsters * 0.5 [set role "gangster" set age 58 set shape "gangster" set next-task [ -> adult-gangster-idle]]]
 
 end
 
