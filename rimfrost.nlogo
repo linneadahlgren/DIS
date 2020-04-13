@@ -25,11 +25,11 @@ patches-own [
 to setup
   clear-all
   setup-territories
-  setup-adult
+;  setup-adult
   setup-police
   setup-adultGangster
-  setup-childGangster
-  setup-child
+;  setup-childGangster
+;  setup-child
   reset-ticks
 end
 
@@ -59,17 +59,17 @@ end
 to setup-police
   let Q 1
   ask n-of Q patches with [pcolor = red - 3]
-  [sprout-persons number-of-police-officers [set role "Law enforcement" set shape "person police"]]
+  [sprout-persons number-of-police-officers [set role "Law enforcement" set shape "person police" set next-task [-> police-actions]]]
 end
 
 to setup-adultGangster
   let Q 1
   ask n-of Q patches with [pcolor = brown - 3]
-  [sprout-persons number-of-adult-gangsters [set role "gangster" set age 28 set shape "gangster"]]
+  [sprout-persons number-of-adult-gangsters [set role "gangster" set age 28 set shape "gangster" set next-task [ -> adult-gangster-idle]]]
   ask n-of Q patches with [pcolor = yellow - 3]
-  [sprout-persons number-of-adult-gangsters * 0.8[set role "gangster" set age 35 set shape "gangster"]]
+  [sprout-persons number-of-adult-gangsters * 0.8[set role "gangster" set age 35 set shape "gangster" set next-task [ -> adult-gangster-idle]]]
   ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-persons number-of-adult-gangsters * 0.5 [set role "gangster" set age 58 set shape "gangster"]]
+  [sprout-persons number-of-adult-gangsters * 0.5 [set role "gangster" set age 58 set shape "gangster" set next-task [ -> adult-gangster-idle]]]
 
 end
 
@@ -94,11 +94,7 @@ to setup-child
 end
 
 to go
-  adult-actions
-  police-actions
-  adult-gangsters-idle
-  child-gangsters-action
-  child-action
+  ask persons [run next-task ]
   tick
 end
 
@@ -111,22 +107,15 @@ to adult-actions
 end
 
 to police-actions
-  ask persons with [role = "Law enforcement"] [
-  ask  other persons with [role = "gangster"] in-radius 10 [set stopped "false"] ; true, false, in-sigh
-  ask  other persons with [role = "gangster"] in-radius 3 [set stopped "true"]
-  ]
-  ask persons with [role = "Law enforcement"] [right random 30  left random 30  forward 0.25]
+  ask persons with [ role = "gangster"] in-radius 2 [set stopped "true"]
+  right random 30  left random 30  forward 0.25 ; then move
 end
 
-to adult-gangsters-idle
-   ; ask persons with [role = "gangster"]
-   ; [ask persons with [role = "Law enforcment"] in-cone 10 90
-   ; [if any? persons with [role = "Law enforcement"] [set next-task [ -> adult-gangster-hide]]]]
-
-    ask persons with [role = "gangster"] [
-    ifelse stopped = "true" [set next-task  [ -> adult-gangster-stand]]
+to adult-gangster-idle
+    ifelse stopped = "true" [set next-task [ -> adult-gangster-stand]]
     [right random 30  left random 30  forward 0.25]
-  ]
+
+  ;]
 end
 
 
@@ -134,14 +123,14 @@ end
 
 ;states for adult-gangster--------------------
 to adult-gangster-stand
-  ask persons with [role = "gangsters"]
-  [repeat 1 [ fd 0 wait 0.5 ]]
+    set stopped "false"
+    set next-task [-> adult-gangster-idle]
+
   ; HÄR SKA POLISEN UTGÖRA SINA ACTIONS
 end
 
 to adult-gangster-hide ; hiding-places måste implementeras
-  ;ask persons with [role = "gangster" ][lt 180]
-  ;ask persons with [role = "gangster" ][set color red]
+
 end
 
 
