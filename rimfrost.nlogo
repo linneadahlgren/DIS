@@ -1,22 +1,39 @@
-__includes [ "setupAll.nls" ]
+__includes [ "setupAll.nls" "adult-gangster-fsm.nls" ]
 
 globals [
   region-boundaries;
   astronomical-day-state                  ; antingen day eller night
 ]
 
+breed [gangsters gangster]
+breed [polices police]
 breed [persons person]
-
 turtles-own []
 
-persons-own [
+polices-own[
   role
   age
   status
   state
   hometerritory
   next-task
-  stopped
+]
+persons-own[
+role
+  age
+  status
+  state
+  hometerritory
+  next-task
+]
+gangsters-own [
+  role
+  age
+  status
+  state
+  hometerritory
+  next-task
+  stoppedByPolice
 ]
 
 patches-own [
@@ -32,7 +49,8 @@ end
 
 to go
   handle-time
-  ask persons [run next-task]
+  ask gangsters [run next-task]
+  ask polices [run next-task]
   tick
 end
 
@@ -46,63 +64,11 @@ to handle-time
   ]
 end
 
-to adult-actions
-  ask persons with [role = "normal"] [
-    ifelse [pcolor] of patch-ahead 0.25 = black     ;if road ahead
-    [lt random-float 180] ;
-  [right random 30  left random 30  forward 0.25]
-  ]
-end
 
 to police-actions
-    ask persons with [ role = "gangster"] in-radius 2 [set stopped "true"]
-  right random 30  left random 30  forward 0.25 ; then move
-end
-
-to adult-gangster-idle
-    ifelse stopped = "true" [set next-task  [ -> adult-gangster-stand]][        ; first check if it should stand still
-
-     let policeClose persons with [role = "Law enforcement" ] in-cone 4 35    ; see if there is police close
-     ifelse any? policeClose [set next-task [ -> adult-gangster-hide]]   [      ; hide if there is
-
-        ifelse astronomical-day-state = "day" [set next-task [-> adult-gangster-work]][ ; if not, countinue business as usual
-          set next-task[ -> go-home ]; else its is night go home?
-        ]
-      ]
-  ]
-
-end
-
-
-to go-home
-  ; idk how to go home?
-  set next-task [ -> adult-gangster-idle]
-
-end
-
-;states for adult-gangster--------------------
-to adult-gangster-stand
-  set hidden? true ; for demo purpose
-    set stopped "false"
-    set next-task [-> adult-gangster-idle]
-
-  ; HÄR SKA POLISEN UTGÖRA SINA ACTIONS
-end
-
-to adult-gangster-hide ; hiding-places måste implementeras
- lt 180
-
-
-     set status "hide" ; Här skall gangsters gå till hideout
-  ;set hidden? true
-  set next-task [ -> adult-gangster-idle]
-end
-
-to adult-gangster-work
-  ifelse [pcolor] of patch-ahead 0.25 = red - 3
-  [lt random-float 180]
-  [right random 30  left random 30  forward 0.25]
-  set next-task [ -> adult-gangster-idle]
+    ask gangsters in-radius 2 [set stoppedByPolice "true"]
+    right random 30  left random 30  forward 0.25 ; then move
+  set next-task [ -> police-actions]
 end
 
 
@@ -116,21 +82,7 @@ end
 
 
 ;states end for adult-gangster----------------
-to child-gangsters-action
-    ask persons with [role = "child-gangster"] [
-   ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
-    [lt random-float 180] ;
-    [right random 30  left random 30  forward 0.25]
-  ]
-end
 
-to child-action
-  ask persons with [role = "child"] [
-    ifelse [pcolor] of patch-ahead 0.25 = black ;if road ahead
-    [lt random-float 180] ;
-  [right random 30  left random 30  forward 0.25]
-  ]
-end
 
 
 
