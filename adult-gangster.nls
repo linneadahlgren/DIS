@@ -70,7 +70,7 @@ end
 ; tell child-gangsters to deliver orders
 ; 
 to adult-gangster-work
-  ifelse [pcolor] of patch-ahead 0.25 = red - 3
+  ifelse [pcolor] of patch-ahead 0.25 = orange
   [lt random-float 180]
   [right random 30  left random 30  forward 0.25 ]                             ; right now they only walk around, but they do not walk in the prison
   

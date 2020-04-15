@@ -15,7 +15,7 @@ to setup-territories
   create-patch "lower class" 9 9 6 brown - 3
   create-patch "middle class" -9 -9 6 yellow - 3
   create-patch "upper class" -9 9 6 sky + 1
-  create-patch "prison" 9 -9 6 red - 3
+  create-patch "prison" 9 -9 6 orange
 end
 
 to create-patch [name x y radius _color]
@@ -37,7 +37,7 @@ end
 ;
 to setup-police
   let Q 1
-  ask n-of Q patches with [pcolor = red - 3]
+  ask n-of Q patches with [pcolor = orange]
   [sprout-polices number-of-police-officers [set shape "person police" set next-task [-> police-actions-idle]]]        
 end
 
