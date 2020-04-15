@@ -1,61 +1,51 @@
-__includes [ "setupAll.nls" "adult-gangster-fsm.nls" ]
+__includes [ "setupAll.nls" "adult-gangster.nls" "police.nls" ]
+; include your breeds file above, make sure its in the same folder as this
+
+
+
 
 globals [
-  region-boundaries;
-  astronomical-day-state                  ; antingen day eller night
+  region-boundaries                       ; region-boundaries
+  astronomical-day-state                  ; is either day or night
 ]
 
-breed [gangsters gangster]
+
+breed [adult-gangsters adult-gangster]
 breed [polices police]
-breed [persons person]
-turtles-own []
 
-polices-own[
-  role
-  age
-  status
-  state
-  hometerritory
-  next-task
-]
-persons-own[
-role
-  age
-  status
-  state
-  hometerritory
-  next-task
-]
-gangsters-own [
-  role
-  age
-  status
-  state
-  hometerritory
-  next-task
-  stoppedByPolice
-]
+
+;
+; definitions for "breeds-own" is as of right now in each breeds own file
+;
+
 
 patches-own [
   region;
 ]
 
+; the territories and turtles set up procedures can be found in the setupAll file
+; please add your set up code there and then call on it in setup-All
+;
 to setup
   clear-all
   setup-All
   reset-ticks
 end
 
-
+; to go is the "main" loop and will run each tick
+;
 to go
   handle-time
-  ask gangsters [run next-task]
-  ask polices [run next-task]
-  tick
+  ask turtles [run next-task]                      ; make sure you set a next-task in set up, it will run here. And yes it works that all the breed have a
+  tick                                             ; the same variable name "next-task", as far as I have tested
 end
 
+
+; toggle the astronomical-day-state each 250 tick
+; it starts with day
+;
 to handle-time
-  let counter ticks mod 500                       ; 500 är antalet ticks vi har per dygn
+  let counter ticks mod 500                       ; 500 ticks is one day
   if( counter < floor(( 500 / 2)))[
     set astronomical-day-state "day"
   ]
@@ -63,42 +53,6 @@ to handle-time
     set astronomical-day-state "night"
   ]
 end
-
-
-to police-actions
-    ask gangsters in-radius 2 [set stoppedByPolice "true"]
-    right random 30  left random 30  forward 0.25 ; then move
-  set next-task [ -> police-actions]
-end
-
-
-
-
-
-
-
-
-
-
-
-;states end for adult-gangster----------------
-
-
-
-
-
-;-----------StateMachines----------------------
-
-;(2)state-working: interacting with normal adult who wants to order illegal stuff
-;(2.1)state-working-delivery: Make child deliver illegal stuff to the adult who ordered it
-
-; joina ett annat gäng?
-;(3)state-defend: interact with several other gang-members to create a possy
-;(3.1)state-defend-boss-search:The possy enters a state to search for the rival gangster-boss at different hiding places
-;(3.2)state-defend-boss-kill: the possy now have enough bling to defeat the boss
-
-;(4.1)state-gangster-boss: switch hiding place once a day ish
-;(4.2)state-gangster-boss-find-other-boss: ------
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -127,11 +81,41 @@ GRAPHICS-WINDOW
 ticks
 30.0
 
+SLIDER
+4
+31
+204
+64
+number-of-adult-gangsters
+number-of-adult-gangsters
+0
+20
+12.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+8
+74
+197
+107
+number-of-police-officers
+number-of-police-officers
+0
+20
+6.0
+1
+1
+NIL
+HORIZONTAL
+
 BUTTON
-669
-287
-732
-320
+16
+407
+79
+440
 setup
 setup
 NIL
@@ -144,27 +128,12 @@ NIL
 NIL
 1
 
-SLIDER
-662
-12
-849
-45
-number-of-normal-adults
-number-of-normal-adults
-10
-20
-10.0
-1
-1
-NIL
-HORIZONTAL
-
 BUTTON
-770
-288
-833
-321
-NIL
+92
+407
+155
+440
+go
 go
 T
 1
@@ -175,66 +144,6 @@ NIL
 NIL
 NIL
 1
-
-SLIDER
-663
-53
-852
-86
-number-of-police-officers
-number-of-police-officers
-5
-15
-5.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-663
-96
-863
-129
-number-of-adult-gangsters
-number-of-adult-gangsters
-5
-12
-12.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-663
-137
-859
-170
-number-of-child-gangsters
-number-of-child-gangsters
-5
-12
-5.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-664
-179
-860
-212
-number-of-normal-children
-number-of-normal-children
-10
-15
-10.0
-1
-1
-NIL
-HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -455,83 +364,6 @@ Rectangle -7500403 true true 45 120 255 285
 Rectangle -16777216 true false 120 210 180 285
 Polygon -7500403 true true 15 120 150 15 285 120
 Line -16777216 false 30 120 270 120
-
-house bungalow
-false
-0
-Rectangle -7500403 true true 210 75 225 255
-Rectangle -7500403 true true 90 135 210 255
-Rectangle -16777216 true false 165 195 195 255
-Line -16777216 false 210 135 210 255
-Rectangle -16777216 true false 105 202 135 240
-Polygon -7500403 true true 225 150 75 150 150 75
-Line -16777216 false 75 150 225 150
-Line -16777216 false 195 120 225 150
-Polygon -16777216 false false 165 195 150 195 180 165 210 195
-Rectangle -16777216 true false 135 105 165 135
-
-house colonial
-false
-0
-Rectangle -7500403 true true 270 75 285 255
-Rectangle -7500403 true true 45 135 270 255
-Rectangle -16777216 true false 124 195 187 256
-Rectangle -16777216 true false 60 195 105 240
-Rectangle -16777216 true false 60 150 105 180
-Rectangle -16777216 true false 210 150 255 180
-Line -16777216 false 270 135 270 255
-Polygon -7500403 true true 30 135 285 135 240 90 75 90
-Line -16777216 false 30 135 285 135
-Line -16777216 false 255 105 285 135
-Line -7500403 true 154 195 154 255
-Rectangle -16777216 true false 210 195 255 240
-Rectangle -16777216 true false 135 150 180 180
-
-house efficiency
-false
-0
-Rectangle -7500403 true true 180 90 195 195
-Rectangle -7500403 true true 90 165 210 255
-Rectangle -16777216 true false 165 195 195 255
-Rectangle -16777216 true false 105 202 135 240
-Polygon -7500403 true true 225 165 75 165 150 90
-Line -16777216 false 75 165 225 165
-
-house ranch
-false
-0
-Rectangle -7500403 true true 270 120 285 255
-Rectangle -7500403 true true 15 180 270 255
-Polygon -7500403 true true 0 180 300 180 240 135 60 135 0 180
-Rectangle -16777216 true false 120 195 180 255
-Line -7500403 true 150 195 150 255
-Rectangle -16777216 true false 45 195 105 240
-Rectangle -16777216 true false 195 195 255 240
-Line -7500403 true 75 195 75 240
-Line -7500403 true 225 195 225 240
-Line -16777216 false 270 180 270 255
-Line -16777216 false 0 180 300 180
-
-house two story
-false
-0
-Polygon -7500403 true true 2 180 227 180 152 150 32 150
-Rectangle -7500403 true true 270 75 285 255
-Rectangle -7500403 true true 75 135 270 255
-Rectangle -16777216 true false 124 195 187 256
-Rectangle -16777216 true false 210 195 255 240
-Rectangle -16777216 true false 90 150 135 180
-Rectangle -16777216 true false 210 150 255 180
-Line -16777216 false 270 135 270 255
-Rectangle -7500403 true true 15 180 75 255
-Polygon -7500403 true true 60 135 285 135 240 90 105 90
-Line -16777216 false 75 135 75 180
-Rectangle -16777216 true false 30 195 93 240
-Line -16777216 false 60 135 285 135
-Line -16777216 false 255 105 285 135
-Line -16777216 false 0 180 75 180
-Line -7500403 true 60 195 60 240
-Line -7500403 true 154 195 154 255
 
 leaf
 false
