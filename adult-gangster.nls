@@ -4,10 +4,13 @@ adult-gangsters-own [
   status
   state
   hometerritory
+  home-id
   next-task
   stoppedByPolice
   isCarryingDrugs
+  homecor array
 ]
+
 
 
 ;----------------------states for adult-gangster--------------------
@@ -37,6 +40,11 @@ end
 ; so during the night they are just standing still
 ;
 to go-home
+  
+  if (distancexy array:item homecor 0 array:item homecor 1 > 1)
+  [set heading towardsxy array:item homecor 0 array:item homecor 1
+    forward 0.25
+  ]
   set next-task [ -> adult-gangster-idle]
 end
 
