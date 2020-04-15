@@ -7,6 +7,7 @@ adult-gangsters-own [
   next-task
   stoppedByPolice
   isCarryingDrugs
+  gangster-hideout
 ]
 
 
@@ -19,7 +20,8 @@ adult-gangsters-own [
 ;
 to adult-gangster-idle
     ifelse stoppedByPolice = "true" [set next-task  [ -> adult-gangster-stand]][        ; highest priority is to stand still if STOPPED
-     set hidden? false                                                ; for demo purpose
+   
+     ;set hidden? false                                                ; for demo purpose
      let policeClose polices in-cone 4 35                                               ; see if there is police in the gangsters line of sight
      ifelse any? policeClose [set next-task [ -> adult-gangster-hide]]   [              ; police is in line of sight hide
         ifelse astronomical-day-state = "day" [set next-task [-> adult-gangster-work]][ ; if everything is fine and it is day continue working
@@ -58,10 +60,19 @@ end
 ; the gangster will walk to the closest hiding place, when finished
 ;
 to adult-gangster-hide                               
-  lt 180                                                                      ; turn 180 degrees and walk that way
-  set hidden? true                                     ; for demo purpose
-
-  set next-task [ -> adult-gangster-idle]
+ ; lt 180                                                                      ; turn 180 degrees and walk that way
+ ; set hidden? true                                     ; for demo purpose
+  ask adult-gangsters [
+    set heading towards gangster-hideout
+    forward 0.5
+    ifelse ticks mod 500 = 0 and distance gangster-hideout < 0.5 [
+     set next-task [ -> adult-gangster-idle] 
+    ][           
+     set next-task [ -> adult-gangster-hide]
+    ]
+  ]
+  
+  
 end
 
 

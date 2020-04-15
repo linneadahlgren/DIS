@@ -1,8 +1,9 @@
 to setup-All
-  setup-territories
+  setup-territories 
+  setup-hidingplaces
   setup-police
   setup-adult-gangster
-  
+    
 ; ADD THE CALL TO SETUP PROCEDUREs HERE
 
 end
@@ -33,6 +34,7 @@ end
 ; ---------------------------- set up for the turtles -----------------------------
 
 
+
 ; right now police will only spawn in the prison
 ;
 to setup-police
@@ -47,20 +49,34 @@ end
 ;
 to setup-adult-Gangster
   let Q 1
-  ask n-of Q patches with [pcolor = brown - 3]
-  [sprout-adult-gangsters number-of-adult-gangsters [ set shape "gangster" set next-task [ -> adult-gangster-idle]]]
-  ask n-of Q patches with [pcolor = yellow - 3]
-  [sprout-adult-gangsters number-of-adult-gangsters * 0.8[set shape "gangster" set next-task [ -> adult-gangster-idle]]]
+;  ask n-of Q patches with [pcolor = brown - 3]
+;  [sprout-adult-gangsters number-of-adult-gangsters [ set shape "gangster" set next-task [ -> adult-gangster-idle]]]
+;  ask n-of Q patches with [pcolor = yellow - 3]
+;  [sprout-adult-gangsters number-of-adult-gangsters * 0.8[set shape "gangster" set next-task [ -> adult-gangster-idle]]]
   ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-adult-gangsters number-of-adult-gangsters * 0.5 [set shape "gangster" set next-task [ -> adult-gangster-idle]]]
+  [sprout-adult-gangsters number-of-adult-gangsters * 0.5 [
+    set shape "gangster"
+    set gangster-hideout hideout random 4      
+    set next-task [ -> adult-gangster-idle]
+    ]
+  ]
 
 end
 
-
 ; ---------------ADD the set up procedures for breeds below -----------------
 
+to setup-hidingplaces
+  
+  create-hidingplaces 5 [ 
+    set shape "house"
+    set color green
+    set size 2
+    setxy random-xcor random-ycor
+    set next-task ""
+  ]
 
 
+end
 
 
 ; --------------- ADD the set up procedure for your breed above ---------------
