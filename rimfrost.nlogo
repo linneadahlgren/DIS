@@ -12,6 +12,7 @@ globals [
 
 breed [adult-gangsters adult-gangster]
 breed [polices police]
+breed [child-gangsters child-gangster]
 
 
 ;
