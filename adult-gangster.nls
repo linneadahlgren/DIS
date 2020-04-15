@@ -1,0 +1,78 @@
+adult-gangsters-own [
+  role
+  age
+  status
+  state
+  hometerritory
+  next-task
+  stoppedByPolice
+]
+
+
+;----------------------states for adult-gangster--------------------
+
+; in the idle state the gangsters priorites the states
+; after each task/state/tick the gangster will come back to the idle state
+; to see if they should continue doing what they are doing or if something else with higher priority 
+; has been "activated" 
+;
+to adult-gangster-idle
+    ifelse stoppedByPolice = "true" [set next-task  [ -> adult-gangster-stand]][        ; highest priority is to stand still if STOPPED
+     set hidden? false                                                ; for demo purpose
+     let policeClose polices in-cone 4 35                                               ; see if there is police in the gangsters line of sight
+     ifelse any? policeClose [set next-task [ -> adult-gangster-hide]]   [              ; police is in line of sight hide
+        ifelse astronomical-day-state = "day" [set next-task [-> adult-gangster-work]][ ; if everything is fine and it is day continue working
+          set next-task[ -> go-home ]                                                   ; if its night go home
+        ]
+     ]
+   ]
+   
+  
+end
+
+
+
+; the gangsters does not have a home right now
+; so during the night they are just standing still
+;
+to go-home
+  set next-task [ -> adult-gangster-idle]
+end
+
+
+
+; when the police orders the gangster to stand still they come to this state and stand still
+; the stoppedByPolice should be toggled by the police when they are finished searching the gangster
+;
+to adult-gangster-stand
+  
+    set stoppedByPolice "false"                                               ; this should be toggled by the police 
+    set next-task [-> adult-gangster-idle]      
+
+end
+
+
+
+; if there is police in the gangsters line of sight we come to this state
+; the gangster will walk to the closest hiding place, when finished
+;
+to adult-gangster-hide                               
+  lt 180                                                                      ; turn 180 degrees and walk that way
+  set hidden? true                                     ; for demo purpose
+
+  set next-task [ -> adult-gangster-idle]
+end
+
+
+
+; here we will implement  another statemachine for working with actions such as
+; take drug orders
+; tell child-gangsters to deliver orders
+; 
+to adult-gangster-work
+  ifelse [pcolor] of patch-ahead 0.25 = orange
+  [lt random-float 180]
+  [right random 30  left random 30  forward 0.25 ]                             ; right now they only walk around, but they do not walk in the prison
+  
+   set next-task [ -> adult-gangster-idle]
+end

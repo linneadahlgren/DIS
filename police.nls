@@ -1,0 +1,27 @@
+polices-own[
+  role
+  age
+  status
+  state
+  hometerritory
+  next-task
+]
+
+
+; this is dummy code that gets called as the police actions
+;
+
+; to whoever is working on police
+; the gangsters will stop and be still when their "stoppedByPolice" variable is true and 
+; walk around freely when its false
+;
+to police-actions-idle
+  ifelse astronomical-day-state = "day" [set next-task [-> police-actions]]
+      [set next-task[-> police-actions-idle]]
+end
+
+to police-actions
+    ask adult-gangsters in-radius 2 [set stoppedByPolice "true"]
+    right random 30  left random 30  forward 0.25 ; then move
+    set next-task [ -> police-actions-idle]
+end
