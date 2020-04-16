@@ -1,7 +1,6 @@
 __includes [ "setupAll.nls" "adult-gangster.nls" "police.nls" ]
 ; include your breeds file above, make sure its in the same folder as this
-
-
+extensions[array]
 
 
 globals [
@@ -13,6 +12,7 @@ globals [
 breed [adult-gangsters adult-gangster]
 breed [polices police]
 breed [child-gangsters child-gangster]
+breed [gangster-homes gangster-home]
 
 
 ;
@@ -37,7 +37,7 @@ end
 ;
 to go
   handle-time
-  ask turtles [run next-task]                      ; make sure you set a next-task in set up, it will run here. And yes it works that all the breed have a
+  ask adult-gangsters [run next-task] ask polices [run next-task]                      ; make sure you set a next-task in set up, it will run here. And yes it works that all the breed have a
   tick                                             ; the same variable name "next-task", as far as I have tested
 end
 
@@ -76,8 +76,8 @@ GRAPHICS-WINDOW
 16
 -16
 16
-0
-0
+1
+1
 1
 ticks
 30.0
@@ -91,7 +91,7 @@ number-of-adult-gangsters
 number-of-adult-gangsters
 0
 20
-12.0
+1.0
 1
 1
 NIL
@@ -106,7 +106,7 @@ number-of-police-officers
 number-of-police-officers
 0
 20
-6.0
+1.0
 1
 1
 NIL
