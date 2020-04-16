@@ -8,7 +8,7 @@ adult-gangsters-own [
   next-task
   stoppedByPolice
   isCarryingDrugs
-  homecor array
+  homexy array
 ]
 
 
@@ -41,8 +41,8 @@ end
 ;
 to go-home
   
-  if (distancexy array:item homecor 0 array:item homecor 1 > 1)
-  [set heading towardsxy array:item homecor 0 array:item homecor 1
+  if (distancexy array:item homexy 0 array:item homexy 1 > 1)
+  [set heading towardsxy array:item homexy 0 array:item homexy 1
     forward 0.25
   ]
   set next-task [ -> adult-gangster-idle]

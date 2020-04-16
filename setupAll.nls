@@ -55,7 +55,7 @@ to setup-adult-Gangster
   ask n-of Q patches with [pcolor = sky + 1]
   [sprout-adult-gangsters 1 [set shape "gangster" set next-task [ -> adult-gangster-idle]]sprout-gangster-homes 1 [set shape "house" set color brown ]]
  
-  ask adult-gangsters [ set homecor array:from-list n-values 2 [0]  array:set homecor 0 xcor  array:set homecor 1 ycor]
+  ask adult-gangsters [ set homexy array:from-list n-values 2 [0]  array:set homexy 0 xcor  array:set homexy 1 ycor]
 
 end
 
