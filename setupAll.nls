@@ -51,13 +51,13 @@ to setup-adult-Gangster
   
   let Q number-of-adult-gangsters
   ask n-of Q patches with [pcolor = brown - 3]
-  [sprout-adult-gangsters 1 [ set shape "gangster" set next-task [ -> adult-gangster-idle]] sprout-gangster-homes 1 [set shape "house" set color brown ]]
+  [sprout-adult-gangsters Q [ set shape "gangster" set next-task [ -> adult-gangster-idle]] sprout-gangster-homes 1 [set shape "house" set color brown ]]
   ask n-of Q patches with [pcolor = yellow - 3]
-  [sprout-adult-gangsters 1 [set shape "gangster" set next-task [ -> adult-gangster-idle]]sprout-gangster-homes 1 [set shape "house" set color brown]]
+  [sprout-adult-gangsters Q [set shape "gangster" set next-task [ -> adult-gangster-idle]]sprout-gangster-homes 1 [set shape "house" set color brown]]
   ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-adult-gangsters 1 [
+  [sprout-adult-gangsters Q [
     set shape "gangster"
-    set gangster-hideout hideout random 4
+
     set next-task [ -> adult-gangster-idle]    
     ]
     sprout-gangster-homes 1 [      
@@ -67,7 +67,8 @@ to setup-adult-Gangster
  
   ask adult-gangsters [ 
     set homexy array:from-list n-values 2 [0]
-    array:set homexy 0 xcor  array:set homexy 1 ycor    
+    array:set homexy 0 xcor  array:set homexy 1 ycor   
+    set gangster-hideout hideout random 4 
   ]
 
 end

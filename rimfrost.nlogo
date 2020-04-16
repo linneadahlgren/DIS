@@ -96,7 +96,7 @@ number-of-adult-gangsters
 number-of-adult-gangsters
 0
 20
-1.0
+3.0
 1
 1
 NIL
@@ -111,7 +111,7 @@ number-of-police-officers
 number-of-police-officers
 0
 20
-1.0
+11.0
 1
 1
 NIL
