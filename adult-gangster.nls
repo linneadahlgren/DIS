@@ -4,11 +4,21 @@ adult-gangsters-own [
   status
   state
   hometerritory
+  home-id
   next-task
   stoppedByPolice
+  stoppedByAdult
   isCarryingDrugs
   gangster-hideout
+  homexy array
 ]
+
+child-gangsters-own [
+  drug-drop-location
+  isCarryingDrugs
+  homexy array
+]
+
 
 
 ;----------------------states for adult-gangster--------------------
@@ -36,6 +46,11 @@ end
 ; so during the night they are just standing still
 ;
 to go-home
+  
+  if (distancexy array:item homexy 0 array:item homexy 1 > 1)
+  [set heading towardsxy array:item homexy 0 array:item homexy 1
+    forward 0.25
+  ]
   set next-task [ -> adult-gangster-idle]
 end
 
@@ -76,11 +91,43 @@ end
 ; here we will implement  another statemachine for working with actions such as
 ; take drug orders
 ; tell child-gangsters to deliver orders
-; 
+; recruit adults to join gang
 to adult-gangster-work
-  ifelse [pcolor] of patch-ahead 0.25 = orange
-  [lt random-float 180]
-  [right random 30  left random 30  forward 0.25 ]                             ; right now they only walk around, but they do not walk in the prison
-  
+  ifelse stoppedByAdult = "true" [set next-task [-> drug-order]][ ; when gangster is stopped, adult changes variables in gangster
+    ifelse [pcolor] of patch-ahead 0.25 = orange
+    [lt random-float 180]
+    [right random 30  left random 30  forward 0.25 ]                             ; right now they only walk around, but they do not walk in the prison
+  ]
    set next-task [ -> adult-gangster-idle]
 end
+
+to drug-order
+  ; either walk to nearest hideout or just find gangster-child somewhere, the child does the rest of the work
+  let childGangsterClose child-gangsters in-radius 2
+  if any? childGangsterClose [set next-task [-> give-delivery-instructions]]
+  
+  set stoppedByAdult "false"                          ;should be set by adult after communication is complete
+  
+  set next-task [-> adult-gangster-work]
+end
+
+to give-delivery-instructions
+  ask child-gangsters in-radius 2 [ 
+    ; vet ej om jag måste fråga om de är i radius 2 igen, men kanske sätter för alla annars, procedure kanske är onödig, sätter i drug order annars
+    
+    ; get drugs at hideout
+    ; set drug-drop-location;insert drop off location for drugs
+  ]
+end
+
+
+
+
+
+
+
+
+
+
+
+

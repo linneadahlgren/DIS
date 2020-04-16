@@ -48,20 +48,31 @@ end
 ; gangsters will spawn in all areas except the prison
 ;
 to setup-adult-Gangster
-  let Q 1
-;  ask n-of Q patches with [pcolor = brown - 3]
-;  [sprout-adult-gangsters number-of-adult-gangsters [ set shape "gangster" set next-task [ -> adult-gangster-idle]]]
-;  ask n-of Q patches with [pcolor = yellow - 3]
-;  [sprout-adult-gangsters number-of-adult-gangsters * 0.8[set shape "gangster" set next-task [ -> adult-gangster-idle]]]
+  
+  let Q number-of-adult-gangsters
+  ask n-of Q patches with [pcolor = brown - 3]
+  [sprout-adult-gangsters 1 [ set shape "gangster" set next-task [ -> adult-gangster-idle]] sprout-gangster-homes 1 [set shape "house" set color brown ]]
+  ask n-of Q patches with [pcolor = yellow - 3]
+  [sprout-adult-gangsters 1 [set shape "gangster" set next-task [ -> adult-gangster-idle]]sprout-gangster-homes 1 [set shape "house" set color brown]]
   ask n-of Q patches with [pcolor = sky + 1]
-  [sprout-adult-gangsters number-of-adult-gangsters * 0.5 [
+  [sprout-adult-gangsters 1 [
     set shape "gangster"
-    set gangster-hideout hideout random 4      
-    set next-task [ -> adult-gangster-idle]
+    set gangster-hideout hideout random 4
+    set next-task [ -> adult-gangster-idle]    
     ]
+    sprout-gangster-homes 1 [      
+      set shape "house" set color brown
+    ]  
+  ]
+ 
+  ask adult-gangsters [ 
+    set homexy array:from-list n-values 2 [0]
+    array:set homexy 0 xcor  array:set homexy 1 ycor    
   ]
 
 end
+
+
 
 ; ---------------ADD the set up procedures for breeds below -----------------
 
