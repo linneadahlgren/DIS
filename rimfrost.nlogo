@@ -2,13 +2,6 @@ __includes [ "setupAll.nls" "adult-gangster.nls" "police.nls" ]
 ; include your breeds file above, make sure its in the same folder as this
 
 
-breed [hidingplaces hideout]
-
-hidingplaces-own [
-  contraband
-  drugs
-  next-task
-]
 
 globals [
   region-boundaries                       ; region-boundaries
@@ -18,11 +11,16 @@ globals [
 
 breed [adult-gangsters adult-gangster]
 breed [polices police]
-
+breed [hidingplaces hideout]
 
 ;
 ; definitions for "breeds-own" is as of right now in each breeds own file
 ;
+hidingplaces-own [
+  contraband
+  drugs
+  next-task
+]
 
 
 patches-own [
@@ -51,11 +49,11 @@ end
 ; it starts with day
 ;
 to handle-time
-  let counter ticks mod 500000                       ; 500 ticks is one day
-  if( counter < floor(( 500000 / 2)))[
+  let counter ticks mod 5000                       ; 500 ticks is one day
+  if( counter < floor(( 5000 / 2)))[
     set astronomical-day-state "day"
   ]
-  if( counter > floor(( 500000 / 2)) + 1 )[
+  if( counter > floor(( 5000 / 2)) + 1 )[
     set astronomical-day-state "night"
   ]
 end
@@ -96,7 +94,7 @@ number-of-adult-gangsters
 number-of-adult-gangsters
 0
 20
-13.0
+14.0
 1
 1
 NIL
@@ -111,7 +109,7 @@ number-of-police-officers
 number-of-police-officers
 0
 20
-5.0
+7.0
 1
 1
 NIL
