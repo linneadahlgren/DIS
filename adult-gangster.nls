@@ -9,6 +9,7 @@ adult-gangsters-own [
   stoppedByPolice
   stoppedByAdult
   isCarryingDrugs
+  homexy array
 ]
 
 child-gangsters-own [
