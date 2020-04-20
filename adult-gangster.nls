@@ -8,15 +8,22 @@ adult-gangsters-own [
   next-task
   stoppedByPolice
   stoppedByAdult
-  isCarryingDrugs
+  customerCareID
   gangster-hideout
   homexy array
 ]
 
 child-gangsters-own [
   drug-drop-location
-  isCarryingDrugs
+  customerCare
   homexy array
+  receiveTask
+  busyFlag
+  deliveryPlace
+]
+
+adults-own [
+  pickupPlace
 ]
 
 
@@ -93,31 +100,27 @@ end
 ; tell child-gangsters to deliver orders
 ; recruit adults to join gang
 to adult-gangster-work
-  ifelse stoppedByAdult = "true" [set next-task [-> drug-order]][ ; when gangster is stopped, adult changes variables in gangster
+  ifelse customerCareID != 0 [set next-task [-> adult-gangster-drug-order]][ ; when gangster is stopped, adult changes variables in gangster
+    ;customerCareID = to the ID of the adult ordering the drugs
     ifelse [pcolor] of patch-ahead 0.25 = orange
     [lt random-float 180]
-    [right random 30  left random 30  forward 0.25 ]                             ; right now they only walk around, but they do not walk in the prison
+    [right random 30  left random 30  forward 0.25 ]
   ]
    set next-task [ -> adult-gangster-idle]
 end
 
-to drug-order
-  ; either walk to nearest hideout or just find gangster-child somewhere, the child does the rest of the work
-  let childGangsterClose child-gangsters in-radius 2
-  if any? childGangsterClose [set next-task [-> give-delivery-instructions]]
+to adult-gangster-drug-order
+  let closestHideout min-one-of other hidingplaces [distance myself] 
+    let childGangsterClosest min-one-of other child-gangsters with [busyFlag = 0] [distance myself]
+  ifelse any? childGangsterClosest [
+    ask childGangsterClosest [set receiveTask customerCare set deliveryPlace closestHideout]
+  ] [set next-task [-> adult-gangster-idle]]
   
-  set stoppedByAdult "false"                          ;should be set by adult after communication is complete
-  
-  set next-task [-> adult-gangster-work]
-end
+  ask turtles with [customerCareID] [set pickupPlace closestHideout]
 
-to give-delivery-instructions
-  ask child-gangsters in-radius 2 [ 
-    ; vet ej om jag måste fråga om de är i radius 2 igen, men kanske sätter för alla annars, procedure kanske är onödig, sätter i drug order annars
-    
-    ; get drugs at hideout
-    ; set drug-drop-location;insert drop off location for drugs
-  ]
+  set customerCareID 0
+  
+  set next-task [-> adult-gangster-idle]
 end
 
 
