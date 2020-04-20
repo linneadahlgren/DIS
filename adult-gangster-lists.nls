@@ -1,0 +1,10 @@
+
+
+to addGangmember [member]
+  set gangMembers lput member gangMembers 
+  
+end
+
+to removeGangmember[member]
+  set gangMembers remove member gangMembers
+end

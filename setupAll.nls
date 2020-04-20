@@ -3,7 +3,9 @@ to setup-All
   setup-hidingplaces
   setup-police
   setup-adult-gangster
-    
+ 
+ 
+  
 ; ADD THE CALL TO SETUP PROCEDUREs HERE
 
 end
@@ -69,6 +71,10 @@ to setup-adult-Gangster
     set homexy array:from-list n-values 2 [0]
     array:set homexy 0 xcor  array:set homexy 1 ycor   
     set gangster-hideout hideout random 4 
+    set gangMembers []
+   ; foreach adult-gangsters
+     ;addGangmember self
+    
   ]
 
 end

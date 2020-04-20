@@ -11,6 +11,7 @@ adult-gangsters-own [
   isCarryingDrugs
   gangster-hideout
   homexy array
+  gangMembers
 ]
 
 child-gangsters-own [
@@ -119,6 +120,10 @@ to give-delivery-instructions
     ; set drug-drop-location;insert drop off location for drugs
   ]
 end
+
+
+
+
 
 
 

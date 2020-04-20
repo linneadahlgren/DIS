@@ -1,10 +1,11 @@
-__includes [ "setupAll.nls" "adult-gangster.nls" "police.nls" ]
+__includes [ "setupAll.nls" "adult-gangster.nls" "police.nls" "adult-gangster-lists.nls"]
 ; include your breeds file above, make sure its in the same folder as this
 extensions[array]
 
 globals [
   region-boundaries                       ; region-boundaries
   astronomical-day-state                  ; is either day or night
+
 ]
 
 
@@ -36,6 +37,7 @@ to setup
   clear-all
   setup-All
   reset-ticks
+
 end
 
 ; to go is the "main" loop and will run each tick
