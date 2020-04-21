@@ -13,6 +13,7 @@ breed [polices police]
 breed [hidingplaces hideout]
 breed [child-gangsters child-gangster]
 breed [gangster-homes gangster-home]
+breed [adults adult]
 
 
 ;
