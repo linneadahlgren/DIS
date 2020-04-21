@@ -75,7 +75,7 @@ to setup-adult-Gangster
     setupGangMembers red
     
     
-    print self print gangMembers
+   
     
   ]
   
