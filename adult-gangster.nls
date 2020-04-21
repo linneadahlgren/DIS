@@ -12,6 +12,7 @@ adult-gangsters-own [
   gangster-hideout
   homexy array
   gangMembers
+  gang
 ]
 
 child-gangsters-own [
